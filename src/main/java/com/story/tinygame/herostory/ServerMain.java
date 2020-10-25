@@ -20,6 +20,7 @@ public class ServerMain {
     public static void main(String[] args) {
         CmdHandlerFactory.init();
         GameMsgRecognizer.init();
+
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
