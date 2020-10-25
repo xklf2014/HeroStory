@@ -26,6 +26,7 @@ public class UserEntryCmdHandler implements ICmdHandler<GameMsgProtocol.UserEntr
         User newUser = new User();
         newUser.setUserId(userId);
         newUser.setHeroAvatar(heroAvatar);
+        newUser.setCurHp(100);
         UserManager.addUser(newUser);
 
         //将用户id附着到channel上

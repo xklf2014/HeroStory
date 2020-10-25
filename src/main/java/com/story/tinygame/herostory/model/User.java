@@ -6,7 +6,8 @@ package com.story.tinygame.herostory.model;
  **/
 public class User {
     private int userId;
-    private String heroAvatar;
+    private String heroAvatar;//当前英雄形象
+    private  int curHp;//当前血量
 
     public final MoveState moveState = new MoveState();
 
@@ -24,5 +25,13 @@ public class User {
 
     public void setHeroAvatar(String heroAvatar) {
         this.heroAvatar = heroAvatar;
+    }
+
+    public int getCurHp() {
+        return curHp;
+    }
+
+    public void setCurHp(int curHp) {
+        this.curHp = curHp;
     }
 }
