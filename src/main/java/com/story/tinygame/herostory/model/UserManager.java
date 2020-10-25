@@ -34,4 +34,9 @@ public final class UserManager {
         return _userMap.values();
     }
 
+    //根据用户id获取用户
+    public static User getUserById(int userId){
+        return _userMap.get(userId);
+    }
+
 }

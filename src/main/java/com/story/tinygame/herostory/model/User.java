@@ -8,6 +8,8 @@ public class User {
     private int userId;
     private String heroAvatar;
 
+    public final MoveState moveState = new MoveState();
+
     public int getUserId() {
         return userId;
     }
