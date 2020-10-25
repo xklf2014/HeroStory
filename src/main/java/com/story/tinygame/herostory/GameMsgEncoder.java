@@ -1,7 +1,6 @@
 package com.story.tinygame.herostory;
 
 import com.google.protobuf.GeneratedMessageV3;
-import com.story.tinygame.herostory.msg.GameMsgProtocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -24,7 +23,7 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
             return;
         }
 
-        int msgCode = GameMsgRecognizer.getMsgCodeByMsgClazz(msg);
+        int msgCode = GameMsgRecognizer.getMsgCodeByMsgClazz(msg.getClass());
         if (msgCode <= -1){
             LOGGER.error("无法识别的消息，msgClazz = {}",msg.getClass().getName());
             return;
