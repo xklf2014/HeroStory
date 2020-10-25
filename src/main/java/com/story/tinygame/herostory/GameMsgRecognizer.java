@@ -24,14 +24,37 @@ public final class GameMsgRecognizer {
     private static final Map<Class<?>, Integer> _msgClazzAndMsgCodeMap = new HashMap<>();
 
     public static void init() {
-        _msgCodeAndMsgBodyMap.put(GameMsgProtocol.MsgCode.USER_ENTRY_CMD_VALUE, GameMsgProtocol.UserEntryCmd.getDefaultInstance());
-        _msgCodeAndMsgBodyMap.put(GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_CMD_VALUE, GameMsgProtocol.WhoElseIsHereCmd.getDefaultInstance());
-        _msgCodeAndMsgBodyMap.put(GameMsgProtocol.MsgCode.USER_MOVE_TO_CMD_VALUE, GameMsgProtocol.UserMoveToCmd.getDefaultInstance());
 
-        _msgClazzAndMsgCodeMap.put(GameMsgProtocol.UserEntryResult.class, GameMsgProtocol.MsgCode.USER_ENTRY_RESULT_VALUE);
-        _msgClazzAndMsgCodeMap.put(GameMsgProtocol.WhoElseIsHereResult.class, GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_RESULT_VALUE);
-        _msgClazzAndMsgCodeMap.put(GameMsgProtocol.UserMoveToResult.class, GameMsgProtocol.MsgCode.USER_MOVE_TO_RESULT_VALUE);
-        _msgClazzAndMsgCodeMap.put(GameMsgProtocol.UserQuitResult.class, GameMsgProtocol.MsgCode.USER_QUIT_RESULT_VALUE);
+        Class<?>[] innerClazzArray = GameMsgProtocol.class.getDeclaredClasses();
+
+        for (Class<?> innerClazz : innerClazzArray) {
+            if (!GeneratedMessageV3.class.isAssignableFrom(innerClazz)) {
+                continue;
+            }
+
+            String clazzName = innerClazz.getSimpleName().toLowerCase();
+            for (GameMsgProtocol.MsgCode msgCode : GameMsgProtocol.MsgCode.values()) {
+                String strMsgCode = msgCode.name().replaceAll("_", "").toLowerCase();
+
+                if (!strMsgCode.startsWith(clazzName)) {
+                    continue;
+                }
+
+                try {
+                    Object returnObj = innerClazz.getDeclaredMethod("getDefaultInstance").invoke(innerClazz);
+
+                    LOGGER.info("{} <==> {}",msgCode.getNumber(),innerClazz.getName());
+                    _msgCodeAndMsgBodyMap.put(msgCode.getNumber(), (GeneratedMessageV3) returnObj);
+
+                    //LOGGER.info("{} <==> {}",innerClazz,msgCode.getNumber());
+                    _msgClazzAndMsgCodeMap.put(innerClazz, msgCode.getNumber());
+
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
+
     }
 
     private GameMsgRecognizer() {
