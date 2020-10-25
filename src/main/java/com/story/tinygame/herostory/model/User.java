@@ -1,4 +1,4 @@
-package com.story.tinygame.herostory;
+package com.story.tinygame.herostory.model;
 
 /**
  * @Author story

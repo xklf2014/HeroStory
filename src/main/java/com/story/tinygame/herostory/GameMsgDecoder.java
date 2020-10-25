@@ -1,17 +1,20 @@
 package com.story.tinygame.herostory;
 
-import com.google.protobuf.GeneratedMessageV3;
-import com.story.tinygame.herostory.msg.GameMsgProtocol;
+import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Author story
  * @CreateTIme 2020/10/24
  **/
 public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameMsgDecoder.class);
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (!(msg instanceof BinaryWebSocketFrame)) {
@@ -24,27 +27,24 @@ public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
         byteBuf.readShort();//读取消息长度
         int msgCode = byteBuf.readShort();//读取消息编号
 
+        //获取消息构建者
+        Message.Builder msgBuilder = GameMsgRecognizer.getBuilderByMessageCode(msgCode);
+        if (msgBuilder == null){
+            LOGGER.error("无法识别的消息,msgCode={}",msgCode);
+            return;
+        }
+
         //获取消息体
         byte[] msgBody = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(msgBody);
 
-        GeneratedMessageV3 gm3 = null;
-        switch (msgCode) {
-            case GameMsgProtocol.MsgCode.USER_ENTRY_CMD_VALUE:
-                gm3 = GameMsgProtocol.UserEntryCmd.parseFrom(msgBody);
-                break;
+        msgBuilder.clear();
+        msgBuilder.mergeFrom(msgBody);
 
-            case GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_CMD_VALUE:
-                gm3 = GameMsgProtocol.WhoElseIsHereCmd.parseFrom(msgBody);
-                break;
+        Message newMsg = msgBuilder.build();
 
-            case GameMsgProtocol.MsgCode.USER_MOVE_TO_CMD_VALUE:
-                gm3 = GameMsgProtocol.UserMoveToCmd.parseFrom(msgBody);
-                break;
-        }
-
-        if (gm3 != null) {
-            ctx.fireChannelRead(gm3);
+        if (newMsg != null) {
+            ctx.fireChannelRead(newMsg);
         }
     }
 }

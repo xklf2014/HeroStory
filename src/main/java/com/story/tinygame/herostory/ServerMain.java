@@ -1,5 +1,6 @@
 package com.story.tinygame.herostory;
 
+import com.story.tinygame.herostory.cmdHandler.CmdHandlerFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -17,6 +18,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
  **/
 public class ServerMain {
     public static void main(String[] args) {
+        CmdHandlerFactory.init();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
