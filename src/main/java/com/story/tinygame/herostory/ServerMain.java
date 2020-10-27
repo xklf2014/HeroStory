@@ -20,6 +20,7 @@ public class ServerMain {
     public static void main(String[] args) {
         CmdHandlerFactory.init();
         GameMsgRecognizer.init();
+        MySqlSessionFactory.init();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -41,7 +42,7 @@ public class ServerMain {
                 });
         try {
             ChannelFuture f = bootstrap.bind(12345).sync();
-            if (f.isSuccess()){
+            if (f.isSuccess()) {
                 System.out.println("server started");
             }
 

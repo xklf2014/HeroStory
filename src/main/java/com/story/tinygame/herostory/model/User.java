@@ -8,6 +8,7 @@ public class User {
     private int userId;
     private String heroAvatar;//当前英雄形象
     private  int curHp;//当前血量
+    private String userName;//用户名
 
     public final MoveState moveState = new MoveState();
 
@@ -33,5 +34,13 @@ public class User {
 
     public void setCurHp(int curHp) {
         this.curHp = curHp;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
