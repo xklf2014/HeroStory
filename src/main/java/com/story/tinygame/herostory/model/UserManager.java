@@ -1,8 +1,8 @@
 package com.story.tinygame.herostory.model;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author story
@@ -11,7 +11,7 @@ import java.util.Map;
  **/
 public final class UserManager {
     //用户字典
-    private static final Map<Integer, User> _userMap = new HashMap<>();
+    private static final Map<Integer, User> _userMap = new ConcurrentHashMap<>();
 
     private UserManager(){}
 

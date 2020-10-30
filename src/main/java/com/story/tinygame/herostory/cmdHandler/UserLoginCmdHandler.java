@@ -1,7 +1,6 @@
 package com.story.tinygame.herostory.cmdHandler;
 
 import com.story.tinygame.herostory.login.LoginService;
-import com.story.tinygame.herostory.login.db.UserEntity;
 import com.story.tinygame.herostory.model.User;
 import com.story.tinygame.herostory.model.UserManager;
 import com.story.tinygame.herostory.msg.GameMsgProtocol;
@@ -21,45 +20,46 @@ public class UserLoginCmdHandler implements ICmdHandler<GameMsgProtocol.UserLogi
 
     @Override
     public void handle(ChannelHandlerContext ctx, GameMsgProtocol.UserLoginCmd msg) {
+
+        if (ctx == null || msg == null) return;
+
         LOGGER.info("username = {} , password = {}",
                 msg.getUserName(),
                 msg.getPassword()
         );
 
-        UserEntity userEntity = null;
-        try {
-            userEntity = LoginService.getInstance().userLogin(msg.getUserName(), msg.getPassword());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        LoginService.getInstance().userLogin(msg.getUserName(), msg.getPassword(), (userEntity -> {
+            if (userEntity == null) {
+                LOGGER.error("用户登录失败,");
+                return;
+            }
 
-        if (userEntity == null) {
-            LOGGER.error("用户登录失败,");
-            return;
-        }
+            int userId = userEntity.getUserId();
+            String heroAvatar = userEntity.getHeroAvatar();
 
-        int userId = userEntity.getUserId();
-        String heroAvatar = userEntity.getHeroAvatar();
+            //将用户加入到用户字典
+            User newUser = new User();
+            newUser.setUserId(userId);
+            newUser.setUserName(userEntity.getUserName());
+            newUser.setHeroAvatar(heroAvatar);
+            newUser.setCurHp(100);
+            UserManager.addUser(newUser);
 
-        //将用户加入到用户字典
-        User newUser = new User();
-        newUser.setUserId(userId);
-        newUser.setUserName(userEntity.getUserName());
-        newUser.setHeroAvatar(heroAvatar);
-        newUser.setCurHp(100);
-        UserManager.addUser(newUser);
+            //将用户id附着到channel上
+            ctx.channel().attr(AttributeKey.valueOf("userId")).set(userId);
 
-        //将用户id附着到channel上
-        ctx.channel().attr(AttributeKey.valueOf("userId")).set(userId);
+            GameMsgProtocol.UserLoginResult.Builder resultBuilder =
+                    GameMsgProtocol.UserLoginResult.newBuilder();
+            resultBuilder.setUserId(newUser.getUserId());
+            resultBuilder.setUserName(newUser.getUserName());
+            resultBuilder.setHeroAvatar(newUser.getHeroAvatar());
 
-        GameMsgProtocol.UserLoginResult.Builder resultBuilder =
-                GameMsgProtocol.UserLoginResult.newBuilder();
-        resultBuilder.setUserId(newUser.getUserId());
-        resultBuilder.setUserName(newUser.getUserName());
-        resultBuilder.setHeroAvatar(newUser.getHeroAvatar());
+            //构造结果并发送消息
+            GameMsgProtocol.UserLoginResult newResult = resultBuilder.build();
+            ctx.writeAndFlush(newResult);
 
-        //构造结果并发送消息
-        GameMsgProtocol.UserLoginResult newResult = resultBuilder.build();
-        ctx.writeAndFlush(newResult);
+        }));
+
+
     }
 }

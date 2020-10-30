@@ -1,6 +1,8 @@
 package com.story.tinygame.herostory;
 
 import com.story.tinygame.herostory.cmdHandler.CmdHandlerFactory;
+import com.story.tinygame.herostory.mq.MQProducer;
+import com.story.tinygame.herostory.util.RedisUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -21,6 +23,8 @@ public class ServerMain {
         CmdHandlerFactory.init();
         GameMsgRecognizer.init();
         MySqlSessionFactory.init();
+        RedisUtil.init();
+        MQProducer.init();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();

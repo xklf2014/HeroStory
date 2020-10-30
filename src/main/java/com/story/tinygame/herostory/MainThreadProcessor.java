@@ -65,6 +65,17 @@ public class MainThreadProcessor {
         });
     }
 
+    /**
+     * 处理消息
+     * @param r  runnable
+     */
+    public void process(Runnable r) {
+        if (r == null) return;
+
+        executor.submit(r);
+
+    }
+
     //消息对象转型
     private static <TCmd extends GeneratedMessageV3> TCmd cast(Object msg) {
         if (msg == null) {
