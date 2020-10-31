@@ -49,13 +49,19 @@ public class UserAttkCmdHandler implements ICmdHandler<GameMsgProtocol.UserAttkC
         if (targerUser.getCurHp() == 0) {
             broadcastDie(targetUserId);
 
-            /**
-             * 发送胜利消息给到mq
-             */
-            VictorMsg mqMsg = new VictorMsg();
-            mqMsg.setWinnerId(attrUserId);
-            mqMsg.setLoserId(targetUserId);
-            MQProducer.sendMsg("Victor", mqMsg);
+
+            if (!targerUser.isDied()){
+                targerUser.setDied(true);
+
+                /**
+                 * 发送胜利消息给到mq
+                 */
+                VictorMsg mqMsg = new VictorMsg();
+                mqMsg.setWinnerId(attrUserId);
+                mqMsg.setLoserId(targetUserId);
+                MQProducer.sendMsg("Victor", mqMsg);
+            }
+
         }
     }
 

@@ -9,6 +9,7 @@ public class User {
     private String heroAvatar;//当前英雄形象
     private  int curHp;//当前血量
     private String userName;//用户名
+    private boolean died; //是否已经死亡
 
     public final MoveState moveState = new MoveState();
 
@@ -42,5 +43,13 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public boolean isDied() {
+        return died;
+    }
+
+    public void setDied(boolean died) {
+        this.died = died;
     }
 }

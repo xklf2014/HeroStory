@@ -25,11 +25,12 @@ public final class MQProducer {
     public static void init() {
         try {
             DefaultMQProducer mqproducer = new DefaultMQProducer("herostory");
-            mqproducer.setNamesrvAddr("127.0.0.1:9786");
+            mqproducer.setNamesrvAddr("192.168.2.116:9786");
             mqproducer.start();
             mqproducer.setRetryTimesWhenSendAsyncFailed(3);
 
             producer = mqproducer;
+
         } catch (MQClientException e) {
             LOGGER.error(e.getErrorMessage(), e);
         }
@@ -54,6 +55,8 @@ public final class MQProducer {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+
+
 
     }
 
